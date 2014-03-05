@@ -134,6 +134,10 @@ public:
 -(void) addFixturesToBody:(b2Body*)body forShapeName:(NSString*)shape
 {
     BodyDef *so = [shapeObjects_ objectForKey:shape];
+    
+    if (!so) {
+        return;
+    }
     assert(so);
     
     FixtureDef *fix = so->fixtures;
@@ -147,6 +151,9 @@ public:
 -(CGPoint) anchorPointForShape:(NSString*)shape
 {
     BodyDef *bd = [shapeObjects_ objectForKey:shape];
+    if (!bd) {
+        return CGPointZero;
+    }
     assert(bd);
     return bd->anchorPoint;
 }
@@ -194,7 +201,6 @@ public:
             basicData.density = [[fixtureData objectForKey:@"density"] floatValue];
             basicData.restitution = [[fixtureData objectForKey:@"restitution"] floatValue];
             basicData.isSensor = [[fixtureData objectForKey:@"isSensor"] boolValue];
-            basicData.userData = [[fixtureData objectForKey:@"id"] retain];
             int callbackData = [[fixtureData objectForKey:@"userdataCbValue"] intValue];
             
             NSString *fixtureType = [fixtureData objectForKey:@"fixture_type"];
@@ -240,7 +246,7 @@ public:
                 
                 b2CircleShape *circleShape = new b2CircleShape();
                 circleShape->m_radius = [[circleData objectForKey:@"radius"] floatValue]  / ptmRatio_;
-                CGPoint p = CGPointFromString_([circleData objectForKey:@"position"]);
+                CGPoint p = CGPointFromString_([fixtureData objectForKey:@"position"]);
                 circleShape->m_p = b2Vec2(p.x / ptmRatio_, p.y / ptmRatio_);
                 fix->fixture.shape = circleShape;
 
